@@ -1,395 +1,128 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Projects LYA</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f4f4f4;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            background-color: #3498db;
-            color: #fff;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .menu-toggle {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        .container {
-            display: flex;
-            flex: 1;
-        }
-        nav {
-            background-color: #2c3e50;
-            color: #fff;
-            width: 200px;
-            padding-bottom: 20px;
-            transition: transform 0.3s ease-in-out;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        nav ul li {
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-        }
-        nav ul li:hover, nav ul li.active {
-            background-color: #34495e;
-        }
-        main {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
-        }
-        .dashboard-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        .card {
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 1rem;
-            flex: 1;
-            min-width: 200px;
-        }
-        .card h3 {
-            margin-bottom: 0.5rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1rem;
-        }
-        th, td {
-            text-align: left;
-            padding: 0.5rem;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .chart-container {
-            width: 100%;
-            margin-top: 1rem;
-        }
-        .bar-chart {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .bar-group {
-            display: flex;
-            align-items: center;
-        }
-        .bar-label {
-            width: 50px;
-            text-align: right;
-            margin-right: 10px;
-        }
-        .bar {
-            height: 20px;
-            background-color: #3498db;
-        }
-        .bar-value {
-            margin-left: 10px;
-        }
-        .task-list {
-            list-style-type: none;
-        }
-        .task-list li {
-            background-color: #fff;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .report-card {
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .report-card h3 {
-            margin-bottom: 0.5rem;
-        }
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-            .container {
-                flex-direction: column;
-            }
-            nav {
-                position: fixed;
-                top: 0;
-                left: -200px;
-                height: 100%;
-                z-index: 1000;
-            }
-            nav.active {
-                left: 0;
-            }
-            main {
-                margin-left: 0;
-            }
-        }
-    </style>
+    <title>Manage Project LYA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css">
 </head>
 <body>
-    <header>
-        <h1>Manage Projects LYA</h1>
-        <div class="menu-toggle">☰</div>
-    </header>
-    <div class="container">
+    <div id="sidebar">
+        <img src="logo.PNG" alt="logo principal">
         <nav>
             <ul>
-                <li class="active" data-section="dashboard">Dashboard</li>
-                <li data-section="projects">Proyectos</li>
-                <li data-section="finances">Finanzas</li>
-                <li data-section="tasks">Tareas</li>
-                <li data-section="reports">Reportes</li>
+                <li><a href="#" data-section="dashboard" class="active">Dashboard</a></li>
+                <li><a href="#" data-section="gantt">Diagrama de Gantt</a></li>
+                <li><a href="#" data-section="kanban">Kanban</a></li>
+                <li><a href="#" data-section="resources">Recursos</a></li>
+                <li><a href="#" data-section="finances">Finanzas</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Informes</a>
+                    <div class="dropdown-content">
+                        <a href="#" data-report="budgetVsSpending">Presupuesto vs Gasto</a>
+                        <a href="#" data-report="cashFlow">Flujo de Caja</a>
+                        <a href="#" data-report="financialStatements">Estados Financieros</a>
+                        <a href="#" data-report="budgetStatements">Estados de Presupuestos</a>
+                        <a href="#" data-report="resources">Recursos</a>
+                    </div>
+                </li>
             </ul>
         </nav>
-        <main>
-            <section id="dashboard" class="active">
-                <h2>Dashboard</h2>
-                <div class="dashboard-cards">
-                    <div class="card">
-                        <h3>Proyectos Activos</h3>
-                        <p id="activeProjects">0</p>
-                    </div>
-                    <div class="card">
-                        <h3>Presupuesto Total</h3>
-                        <p id="totalBudget">$0</p>
-                    </div>
-                    <div class="card">
-                        <h3>Gastos Totales</h3>
-                        <p id="totalSpent">$0</p>
-                    </div>
+    </div>
+    
+    <main>
+        <section id="dashboard" class="active">
+            <h2>Dashboard</h2>
+            <div class="widget-container">
+                <div class="widget">
+                    <h3>Progreso del Proyecto</h3>
+                    <canvas id="progressChart"></canvas>
                 </div>
-            </section>
-            <section id="projects">
-                <h2>Proyectos</h2>
-                <table id="projectsTable">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Progreso</th>
-                            <th>Presupuesto</th>
-                            <th>Gastado</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </section>
-            <section id="finances">
-                <h2>Finanzas</h2>
-                <div class="chart-container">
-                    <h3>Ingresos vs Gastos</h3>
-                    <div id="financesChart" class="bar-chart"></div>
+                <div class="widget">
+                    <h3>Resumen Financiero</h3>
+                    <canvas id="financialSummaryChart"></canvas>
                 </div>
-            </section>
-            <section id="tasks">
-                <h2>Tareas</h2>
-                <ul class="task-list" id="taskList"></ul>
-            </section>
-            <section id="reports">
-                <h2>Reportes</h2>
-                <div id="reportsList"></div>
-            </section>
-        </main>
+            </div>
+        </section>
+        
+        <section id="gantt">
+            <h2>Diagrama de Gantt</h2>
+            <div class="gantt-container">
+                <div id="GanttChartDIV" style="width:100%; height:500px;"></div>
+            </div>
+        </section>
+        
+        <section id="kanban">
+            <h2>Kanban</h2>
+            <div class="kanban-board">
+                <div class="kanban-column" id="todo">
+                    <h3>Por Hacer</h3>
+                </div>
+                <div class="kanban-column" id="in-progress">
+                    <h3>En Progreso</h3>
+                </div>
+                <div class="kanban-column" id="done">
+                    <h3>Hecho</h3>
+                </div>
+            </div>
+        </section>
+        
+        <section id="resources">
+            <h2>Recursos</h2>
+            <table id="resourceTable">
+                <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Nombre</th>
+                        <th>Rol</th>
+                        <th>Costo/Hora</th>
+                        <th>Disponibilidad</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+        
+        <section id="finances">
+            <h2>Finanzas</h2>
+            <div class="widget-container">
+                <div class="widget">
+                    <h3>Presupuesto vs Gasto</h3>
+                    <canvas id="budgetVsSpendingChart"></canvas>
+                </div>
+                <div class="widget">
+                    <h3>Flujo de Caja</h3>
+                    <canvas id="cashFlowChart"></canvas>
+                </div>
+                <div class="widget">
+                    <h3>Estados Financieros</h3>
+                    <canvas id="financialStatementsChart"></canvas>
+                </div>
+                <div class="widget">
+                    <h3>Estados de Presupuestos</h3>
+                    <canvas id="budgetStatementsChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para la descarga de informes -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Descargar Informe</h2>
+            <p>Seleccione el formato de descarga:</p>
+            <button id="downloadExcel">Excel</button>
+            <button id="downloadPDF">PDF</button>
+        </div>
     </div>
 
-    <script>
-        const projectData = [
-            { id: 1, name: 'Desarrollo Web', progress: 75, budget: 50000, spent: 35000 },
-            { id: 2, name: 'App Móvil', progress: 30, budget: 75000, spent: 20000 },
-            { id: 3, name: 'Marketing Digital', progress: 60, budget: 30000, spent: 18000 },
-        ];
-
-        const financialData = [
-            { month: 'Ene', income: 40000, expenses: 35000 },
-            { month: 'Feb', income: 45000, expenses: 38000 },
-            { month: 'Mar', income: 55000, expenses: 42000 },
-            { month: 'Abr', income: 60000, expenses: 48000 },
-        ];
-
-        const taskData = [
-            { id: 1, project: 'Desarrollo Web', task: 'Diseñar página de inicio', status: 'En progreso' },
-            { id: 2, project: 'Desarrollo Web', task: 'Implementar backend', status: 'Pendiente' },
-            { id: 3, project: 'App Móvil', task: 'Diseñar interfaz de usuario', status: 'Completado' },
-            { id: 4, project: 'App Móvil', task: 'Desarrollar funcionalidad de login', status: 'En progreso' },
-            { id: 5, project: 'Marketing Digital', task: 'Crear campaña en redes sociales', status: 'En progreso' },
-        ];
-
-        const reportData = [
-            { id: 1, title: 'Informe de Progreso Mensual', date: '2023-04-30', description: 'Resumen del avance de todos los proyectos en el último mes.' },
-            { id: 2, title: 'Análisis Financiero Q1', date: '2023-03-31', description: 'Análisis detallado de ingresos y gastos del primer trimestre.' },
-            { id: 3, title: 'Evaluación de Rendimiento de Equipo', date: '2023-04-15', description: 'Evaluación del desempeño de los miembros del equipo en todos los proyectos.' },
-        ];
-
-        function initDashboard() {
-            document.getElementById('activeProjects').textContent = projectData.length;
-            document.getElementById('totalBudget').textContent = '$' + projectData.reduce((sum, project) => sum + project.budget, 0).toLocaleString();
-            document.getElementById('totalSpent').textContent = '$' + projectData.reduce((sum, project) => sum + project.spent, 0).toLocaleString();
-        }
-
-        function initProjects() {
-            const tbody = document.querySelector('#projectsTable tbody');
-            tbody.innerHTML = '';
-            projectData.forEach(project => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${project.name}</td>
-                    <td>${project.progress}%</td>
-                    <td>$${project.budget.toLocaleString()}</td>
-                    <td>$${project.spent.toLocaleString()}</td>
-                `;
-            });
-        }
-
-        function initFinances() {
-            const chartContainer = document.getElementById('financesChart');
-            chartContainer.innerHTML = '';
-            const maxValue = Math.max(...financialData.flatMap(d => [d.income, d.expenses]));
-            
-            financialData.forEach(data => {
-                const barGroup = document.createElement('div');
-                barGroup.className = 'bar-group';
-                
-                const label = document.createElement('div');
-                label.className = 'bar-label';
-                label.textContent = data.month;
-                barGroup.appendChild(label);
-
-                const incomeBar = document.createElement('div');
-                incomeBar.className = 'bar';
-                incomeBar.style.width = `${(data.income / maxValue) * 100}%`;
-                incomeBar.style.backgroundColor = '#3498db';
-                barGroup.appendChild(incomeBar);
-
-                const incomeValue = document.createElement('div');
-                incomeValue.className = 'bar-value';
-                incomeValue.textContent = `$${data.income.toLocaleString()}`;
-                barGroup.appendChild(incomeValue);
-
-                chartContainer.appendChild(barGroup);
-
-                const expensesBarGroup = document.createElement('div');
-                expensesBarGroup.className = 'bar-group';
-                
-                const expensesLabel = document.createElement('div');
-                expensesLabel.className = 'bar-label';
-                expensesBarGroup.appendChild(expensesLabel);
-
-                const expensesBar = document.createElement('div');
-                expensesBar.className = 'bar';
-                expensesBar.style.width = `${(data.expenses / maxValue) * 100}%`;
-                expensesBar.style.backgroundColor = '#e74c3c';
-                expensesBarGroup.appendChild(expensesBar);
-
-                const expensesValue = document.createElement('div');
-                expensesValue.className = 'bar-value';
-                expensesValue.textContent = `$${data.expenses.toLocaleString()}`;
-                expensesBarGroup.appendChild(expensesValue);
-
-                chartContainer.appendChild(expensesBarGroup);
-            });
-        }
-
-        function initTasks() {
-            const taskList = document.getElementById('taskList');
-            taskList.innerHTML = '';
-            taskData.forEach(task => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <strong>${task.project}</strong>: ${task.task} <br>
-                    <em>Estado: ${task.status}</em>
-                `;
-                taskList.appendChild(li);
-            });
-        }
-
-        function initReports() {
-            const reportsList = document.getElementById('reportsList');
-            reportsList.innerHTML = '';
-            reportData.forEach(report => {
-                const reportCard = document.createElement('div');
-                reportCard.className = 'report-card';
-                reportCard.innerHTML = `
-                    <h3>${report.title}</h3>
-                    <p><strong>Fecha:</strong> ${report.date}</p>
-                    <p>${report.description}</p>
-                `;
-                reportsList.appendChild(reportCard);
-            });
-        }
-
-        function showSection(sectionId) {
-            document.querySelectorAll('main section').forEach(section => {
-                section.classList.remove('active');
-                section.style.display = 'none';
-            });
-            document.getElementById(sectionId).style.display = 'block';
-            document.querySelectorAll('nav li').forEach(item => {
-                item.classList.remove('active');
-            });
-            document.querySelector(`nav li[data-section="${sectionId}"]`).classList.add('active');
-        }
-
-        document.querySelectorAll('nav li').forEach(item => {
-            item.addEventListener('click', () => {
-                const sectionId = item.getAttribute('data-section');
-                showSection(sectionId);
-                if (window.innerWidth <= 768) {
-                    document.querySelector('nav').classList.remove('active');
-                }
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initDashboard();
-            initProjects();
-            initFinances();
-            initTasks();
-            initReports();
-            showSection('dashboard');
-
-            const menuToggle = document.querySelector('.menu-toggle');
-            const nav = document.querySelector('nav');
-
-            menuToggle.addEventListener('click', () => {
-                nav.classList.toggle('active');
-            });
-
-            // Cerrar el menú al hacer clic fuera de él
-            document.addEventListener('click', (e) => {
-                if (!nav.contains(e.target) && !menuToggle.contains(e.target)) {
-                    nav.classList.remove('active');
-                }
-            });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
